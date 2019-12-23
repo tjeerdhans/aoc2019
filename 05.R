@@ -22,12 +22,12 @@ result5a <- function() {
   inputs_pointer <- 1
   pointer <- 1
   res <- 0
-  while (res != 99) {
+  while (!is.null(res)) {
     o <- ops5[pointer]
     op <- decode(o)
     m <- modes(o)
     res <- switch (op,
-                   {
+                   { # 1 add
                      p1 <-
                        ifelse(length(m) > 0 &
                                 m[1] == 1, ops5[pointer + 1], ops5[ops5[pointer + 1] + 1])
@@ -35,13 +35,11 @@ result5a <- function() {
                        ifelse(length(m) > 1 &
                                 m[2] == 1, ops5[pointer + 2], ops5[ops5[pointer + 2] + 1])
                      dest <- ops5[pointer + 3] + 1
-                     #print(c(p1,p2,dest))
                      ops5[dest] <- (p1 + p2)
-                     #print(ops5[dest])
                      pointer <- pointer + 4
                      1
                    },
-                   {
+                   { # 2 multiply
                      p1 <-
                        ifelse(length(m) > 0 &
                                 m[1] == 1, ops5[pointer + 1], ops5[ops5[pointer + 1] + 1])
@@ -53,23 +51,33 @@ result5a <- function() {
                      pointer <- pointer + 4
                      2
                    },
-                   {
+                   { # 3 take input
                      dest <- ops5[pointer + 1] + 1
                      ops5[dest] <- inputs[inputs_pointer]
                      inputs_pointer <- inputs_pointer + 1
                      pointer <- pointer + 2
                      3
                    },
-                   {
+                   { # 4 print output
                      p1 <-
                        ifelse(length(m) > 0 &
                                 m[1] == 1, ops5[pointer + 1], ops5[ops5[pointer + 1] + 1])
                      print(p1)
                      pointer <- pointer + 2
                      4
+                   },
+                   { # 5 jump-if-true
+                     
+                   },
+                   { # 6 jump-if-false
+                     
+                   },
+                   { # 7 less than
+                     
+                   },
+                   { # 8 equals
+                     
                    })
-    #print(res)
-    ifelse(is.null(res), res <- 99, res)
   }
 }
 
