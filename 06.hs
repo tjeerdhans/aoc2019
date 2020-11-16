@@ -37,12 +37,14 @@ main = do
 
 
 testinput = ["COM)BBB","BBB)CCC","CCC)DDD","DDD)EEE","EEE)FFF","BBB)GGG","GGG)HHH","DDD)III","EEE)JJJ","JJJ)KKK","KKK)LLL"]
+testinputB = ["COM)BBB","BBB)CCC","CCC)DDD","DDD)EEE","EEE)FFF","BBB)GGG","GGG)HHH","DDD)III","EEE)JJJ","JJJ)KKK","KKK)LLL","KKK)YOU","III)SAN"]
 orbits xs = [(a,b) | x<-xs, let a = take 3 x, let b = drop 4 x]
 
 orbitTree :: Eq a => [(a, a)] -> Tree a -> Tree a
 orbitTree [] (Node a f) = Node a f
 orbitTree (x:xs) (Node a f)
-    | inTree (fst x) (Node a f)  = orbitTree xs (insertAfter (fst x) (snd x) (Node a f))
+    | inTree (fst x) (Node a f) = orbitTree xs (insertAfter (fst x) (snd x) (Node a f))
+    -- | inTree (snd x) (Node a f) = orbitTree xs (insertBefore (fst x) (snd x) (Node a f))
     | otherwise = orbitTree (xs++[x]) (Node a f)
 
 orbitSum :: Tree a -> Int
@@ -63,9 +65,14 @@ insertAfter a b (Node x f) -- insert b after a
     | a == x = Node x  ([Node b []] ++ f)
     | otherwise = Node x [insertAfter a b y| y<-f]
 
-t = Node "a" [Node "b" [Node "d" []], Node "c" [] ] 
+
+-- orbitsToSanta (Node x f) = 
+orbitSeqTo as a (Node x f)
+    | a == x = as
+    | otherwise = orbitSeqTo as++[b | (Node b y)<-f, inTree a (Node b y)] a
 
 -- tests
+t = Node "a" [Node "b" [Node "d" []], Node "c" [] ] 
 test1 = putStr $ drawTree $ insertBefore "x" "a" t
 test2 = putStr $ drawTree $ insertBefore "x" "b" t
 test3 = putStr $ drawTree $ insertBefore "c" "b" t
@@ -75,3 +82,5 @@ test5 =  putStr $ drawTree $ insertAfter "d" "e" t
 
 test6 = orbitTree (orbits testinput) (Node "COM" [])
 test7 = putStr $ drawTree test6
+test8 = orbitTree (orbits testinputB) (Node "COM" [])
+test9 = putStr $ drawTree test8
